@@ -1,97 +1,113 @@
-Multi-Agent Procurement Framework
-This project implements a multi-agent system to automate the procurement process for products across multiple e-commerce platforms. The system searches, compares, and generates reports for products based on specific criteria.
 
-Key Features
-Automated Product Search: Searches across Amazon.eg, Jumia.com.eg, and Noon.com
+# 🧠 Multi-Agent Framework with CrewAI
 
-Price Comparison: Compares prices, discounts, and specifications
+This project demonstrates a multi-agent system using [CrewAI](https://github.com/joaomdmoura/crewai), AgentOps, Tavily, and ScrapeGraph for autonomous web tasks and data extraction.
 
-Professional Reporting: Generates detailed HTML procurement reports
+## 📦 Requirements
 
-Multi-Agent Architecture: Uses specialized agents for each step of the process
+Ensure the following dependencies are installed:
 
-Agents Overview
-Search Queries Recommendation Agent
-
-Generates optimized search queries for e-commerce platforms
-
-Focuses on specific product attributes and price ranges
-
-Search Engine Agent
-
-Executes searches across multiple platforms
-
-Filters results based on confidence scores and relevance
-
-Web Scraping Agent
-
-Extracts detailed product information
-
-Collects specifications, prices, and images
-
-Procurement Report Author Agent
-
-Generates professional HTML reports
-
-Includes comparisons, analysis, and recommendations
-
-Report Verifier Agent
-
-Enhances and validates the final report
-
-Ensures proper structure and valid URLs
-
-Example Output
-The system generates comprehensive reports including:
-
-Product comparisons with prices and specifications
-
-Visual tables with rankings
-
-Detailed analysis and recommendations
-
-Executive summaries and conclusions
-
-Technologies Used
-Python 3.11
-
-CrewAI framework
-
-Bootstrap 5 (for HTML reports)
-
-Cohere LLM
-
-Tavily search API
-
-ScrapeGraph web scraping tool
-
-Setup Instructions
-Install required packages:
-``` bash
-pip install -qU crewai[tools,agentops] tavily-python scrapegraph-py
+```bash
+pip install -qU crewai[tools,agentops]
+pip install -qU tavily-python scrapegraph-py
 ```
-Set up API keys for:
 
-Cohere
+## 🔐 API Keys Setup
 
-AgentOps
+Register for API keys and set them using `userdata` (e.g., in Google Colab):
 
-Tavily
+```python
+os.environ["COHERE_API_KEY"] = userdata.get('cohere-colab')
+os.environ["AGENTOPS_API_KEY"] = userdata.get('agentops-colab')
+```
 
-ScrapeGraph
+You can get your AgentOps key here: [AgentOps Setup](https://app.agentops.ai/get-started)
 
-Run the notebook to execute the procurement process
+## 🚀 Initialize AgentOps
 
-Sample Use Case
-The system was used to find and compare waterproof crossbody bags for men under 500 EGP, generating a detailed procurement report with top recommendations.
+```python
+import agentops
 
-Output Files
-step_1_suggested_search_queries.json: Generated search queries
+agentops.init(
+    api_key=userdata.get('agentops-colab'),
+    skip_auto_end_session=True,
+    default_tags=['crewai']
+)
+```
 
-step_2_search_results.json: Raw search results
+## 🧰 Framework Components
 
-step_3_search_results.json: Extracted product details
+- **LLM Integration** with Cohere
+- **Search Agents** powered by Tavily
+- **Scraping Tools** via ScrapeGraph
+- **Custom Tools** defined with `@tool` decorators
+- **Knowledge Sources** using in-memory strings
 
-step_4_procurement_report.html: Initial report
+## 📁 Output
 
-step_5_enhanced_report.html: Final verified report
+Outputs are stored in:
+
+```python
+output_dir = "./ai-agent-output"
+os.makedirs(output_dir, exist_ok=True)
+```
+
+## 🛠️ Define Tools
+
+```python
+@tool
+def write_to_json(data: dict, filename: str) -> str:
+    path = os.path.join(output_dir, filename)
+    with open(path, 'w') as f:
+        json.dump(data, f, indent=2)
+    return f"Written to {path}"
+```
+
+## 👥 Create Agents
+
+Agents include:
+
+- `SearchAgent`: Queries using Tavily
+- `ScraperAgent`: Extracts structured data from pages
+- `WriterAgent`: Converts findings into structured output
+
+```python
+search_agent = Agent(role="Searcher", ...)
+scraper_agent = Agent(role="Scraper", ...)
+writer_agent = Agent(role="Writer", ...)
+```
+
+## 🧩 Define Tasks
+
+Each agent has associated tasks:
+
+```python
+search_task = Task(description="Search for top Python frameworks", agent=search_agent, ...)
+scrape_task = Task(description="Scrape details from URLs", agent=scraper_agent, ...)
+write_task = Task(description="Write JSON summary", agent=writer_agent, ...)
+```
+
+## 🧠 Crew Execution
+
+```python
+crew = Crew(
+    agents=[search_agent, scraper_agent, writer_agent],
+    tasks=[search_task, scrape_task, write_task],
+    process=Process.sequential
+)
+result = crew.kickoff()
+print(result)
+```
+
+## 🧪 Bash (Colab or Local)
+
+```bash
+python3 --version
+mkdir -p ai-agent-output
+```
+
+## 📄 Notes
+
+- Ensure your API keys are set securely
+- You can modify tasks to target different search queries or output formats
+- Ideal for autonomous agents and LLM task chaining demos
