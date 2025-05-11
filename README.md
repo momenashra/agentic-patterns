@@ -1,113 +1,119 @@
+# 🕸️ Autonomous Multi-Agent Web Scraping Framework
 
-# 🧠 Multi-Agent Framework with CrewAI
+This project demonstrates an **autonomous multi-agent system** that performs complex web data collection and reporting with minimal human intervention. It blends **task-driven workflow** with **code-level setup instructions**, making it easy to understand **what** the system does and **how** to run it.
 
-This project demonstrates a multi-agent system using [CrewAI](https://github.com/joaomdmoura/crewai), AgentOps, Tavily, and ScrapeGraph for autonomous web tasks and data extraction.
+---
 
-## 📦 Requirements
+## 🎯 Task Overview
 
-Ensure the following dependencies are installed:
+1. **Search Phase**  
+   - A **Search Agent** queries target websites (e.g., Amazon.eg, Jumia, Noon) for products matching specific criteria (e.g., waterproof crossbody bags under 500 EGP).  
+   - Parallel search queries ensure broad coverage.
+
+2. **Scraping Phase**  
+   - A **Scraper Agent** visits each URL, extracting structured details: title, price, image URL, specifications.  
+   - Filters out incomplete or irrelevant entries.
+
+3. **Aggregation Phase**  
+   - An **Aggregator Agent** compiles cleaned data into a uniform JSON format, ready for downstream analysis.
+
+4. **Reporting Phase**  
+   - A **Writer Agent** generates a **summary report** (HTML, Markdown, PDF) with price comparisons, key findings, and top recommendations.
+
+---
+
+## 🔄 Workflow
+
+1. **Define Agents & Tasks**  
+   - Roles: Searcher, Scraper, Aggregator, Reporter.  
+   - Task definitions specify inputs, outputs, and order.
+
+2. **Initialize Crew**  
+   - Use CrewAI to assemble agents and tasks into a pipeline.  
+   - Choose **sequential** or **parallel** execution.
+
+3. **Execute Pipeline**  
+   - Run the crew: data flows automatically from search to report generation.
+
+4. **Review Outputs**  
+   - Check `/output` for:
+     - **JSON** with top 10 products and specifications
+     - **HTML/Markdown report** highlighting procurement insights
+
+---
+
+## 🔧 Prerequisites
+
+- Python 3.10–3.12  
+- API keys for required services (e.g., Cohere, AgentOps)
+
+---
+
+## 📦 Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/auto-web-scraper.git
+cd auto-web-scraper
+
+# Install dependencies
 pip install -qU crewai[tools,agentops]
 pip install -qU tavily-python scrapegraph-py
 ```
 
-## 🔐 API Keys Setup
+---
 
-Register for API keys and set them using `userdata` (e.g., in Google Colab):
+## 🚀 Usage
 
-```python
-os.environ["COHERE_API_KEY"] = userdata.get('cohere-colab')
-os.environ["AGENTOPS_API_KEY"] = userdata.get('agentops-colab')
+1. **Set API Keys**  
+   ```bash
+   export COHERE_API_KEY="your-cohere-key"
+   export AGENTOPS_API_KEY="your-agentops-key"
+   ```
+
+2. **Run the Pipeline**  
+   ```bash
+   python run_pipeline.py
+   ```
+
+3. **View Results**  
+   ```bash
+   ls output/
+   cat output/report.md
+   ```
+
+---
+
+## 🗂️ Project Structure
+
+```
+├── run_pipeline.py      # Script to launch the multi-agent crew
+├── tasks.py             # Definitions of agents and tasks
+├── tools.py             # Custom tool implementations (e.g., write_to_json)
+├── output/              # Generated JSON and reports
+├── README.md            # This file
+└── requirements.txt     # Pinned dependencies
 ```
 
-You can get your AgentOps key here: [AgentOps Setup](https://app.agentops.ai/get-started)
+---
 
-## 🚀 Initialize AgentOps
+## 🌟 Key Benefits
 
-```python
-import agentops
+- **Scalable**: Easily add or replace agents/tasks  
+- **Modular**: Swap search/scrape strategies per agent  
+- **Reproducible**: Version-controlled configs and requirements
 
-agentops.init(
-    api_key=userdata.get('agentops-colab'),
-    skip_auto_end_session=True,
-    default_tags=['crewai']
-)
-```
+---
 
-## 🧰 Framework Components
+## 📖 References
 
-- **LLM Integration** with Cohere
-- **Search Agents** powered by Tavily
-- **Scraping Tools** via ScrapeGraph
-- **Custom Tools** defined with `@tool` decorators
-- **Knowledge Sources** using in-memory strings
+- [CrewAI](https://github.com/joaomdmoura/crewai)  
+- [AgentOps Documentation](https://app.agentops.ai/docs)  
+- [Tavily Python](https://pypi.org/project/tavily-python/)  
+- [ScrapeGraph Py](https://pypi.org/project/scrapegraph-py/)  
 
-## 📁 Output
+---
 
-Outputs are stored in:
+## 📜 License
 
-```python
-output_dir = "./ai-agent-output"
-os.makedirs(output_dir, exist_ok=True)
-```
-
-## 🛠️ Define Tools
-
-```python
-@tool
-def write_to_json(data: dict, filename: str) -> str:
-    path = os.path.join(output_dir, filename)
-    with open(path, 'w') as f:
-        json.dump(data, f, indent=2)
-    return f"Written to {path}"
-```
-
-## 👥 Create Agents
-
-Agents include:
-
-- `SearchAgent`: Queries using Tavily
-- `ScraperAgent`: Extracts structured data from pages
-- `WriterAgent`: Converts findings into structured output
-
-```python
-search_agent = Agent(role="Searcher", ...)
-scraper_agent = Agent(role="Scraper", ...)
-writer_agent = Agent(role="Writer", ...)
-```
-
-## 🧩 Define Tasks
-
-Each agent has associated tasks:
-
-```python
-search_task = Task(description="Search for top Python frameworks", agent=search_agent, ...)
-scrape_task = Task(description="Scrape details from URLs", agent=scraper_agent, ...)
-write_task = Task(description="Write JSON summary", agent=writer_agent, ...)
-```
-
-## 🧠 Crew Execution
-
-```python
-crew = Crew(
-    agents=[search_agent, scraper_agent, writer_agent],
-    tasks=[search_task, scrape_task, write_task],
-    process=Process.sequential
-)
-result = crew.kickoff()
-print(result)
-```
-
-## 🧪 Bash (Colab or Local)
-
-```bash
-python3 --version
-mkdir -p ai-agent-output
-```
-
-## 📄 Notes
-
-- Ensure your API keys are set securely
-- You can modify tasks to target different search queries or output formats
-- Ideal for autonomous agents and LLM task chaining demos
+MIT License. See `LICENSE` file for details.
