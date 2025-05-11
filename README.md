@@ -110,7 +110,8 @@ pip install -qU tavily-python scrapegraph-py
 - [CrewAI](https://github.com/joaomdmoura/crewai)  
 - [AgentOps Documentation](https://app.agentops.ai/docs)  
 - [Tavily Python](https://pypi.org/project/tavily-python/)  
-- [ScrapeGraph Py](https://pypi.org/project/scrapegraph-py/)  
+- [ScrapeGraph Py](https://pypi.org/project/scrapegraph-py/)
+- [Eng.Abubakr](https://www.youtube.com/watch?v=DDR4A8-MLQs/)
 
 ---
 
