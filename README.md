@@ -92,7 +92,6 @@ pip install -qU tavily-python scrapegraph-py
 ├── tools.py             # Custom tool implementations (e.g., write_to_json)
 ├── output/              # Generated JSON and reports
 ├── README.md            # This file
-└── requirements.txt     # Pinned dependencies
 ```
 
 ---
@@ -112,9 +111,3 @@ pip install -qU tavily-python scrapegraph-py
 - [Tavily Python](https://pypi.org/project/tavily-python/)  
 - [ScrapeGraph Py](https://pypi.org/project/scrapegraph-py/)
 - [Eng.Abubakr](https://www.youtube.com/watch?v=DDR4A8-MLQs/)
-
----
-
-## 📜 License
-
-MIT License. See `LICENSE` file for details.
